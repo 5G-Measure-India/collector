@@ -2,21 +2,20 @@ package phy
 
 import (
 	"bufio"
-	"encoding/json"
 	"fmt"
 	"io"
 	"log"
 	"os"
 	"os/exec"
+	"path"
 	"strings"
 	"time"
 
-	"github.com/5G-Measure-India/collector/internal/channel"
-	"github.com/5G-Measure-India/collector/internal/config.go"
+	"github.com/5G-Measure-India/collector/internal/config"
 	"github.com/5G-Measure-India/collector/internal/util"
 )
 
-var done = make(channel.Type)
+var done = make(util.Type)
 
 type Ml1Info struct {
 	Timestamp            string `json:"timestamp"`
@@ -38,9 +37,9 @@ func unmarshalTime(data string) (tstamp time.Time, err error) {
 }
 
 func PhyRoutine() {
-	defer close(channel.PhyDone)
+	defer close(util.PhyDone)
 
-	csvFile := util.GetFilePath(config.OutDir, "phy.log", config.Timestamp)
+	csvFile := path.Join(config.OutDir, config.GetFname("phy.log"))
 	csvWriter, err := os.Create(csvFile)
 	if err != nil {
 		log.Println("[phy] error opening log file:", err)
@@ -57,7 +56,7 @@ func PhyRoutine() {
 	defer logOut.Close()
 	defer logIn.Close()
 
-	cmd := exec.Command(config.Python, config.PhyPy)
+	cmd := exec.Command(config.Python, config.MobMon)
 	cmd.Stdout = logOut
 	cmd.Stderr = logOut
 
@@ -69,7 +68,7 @@ func PhyRoutine() {
 
 	go logger(logIn, csvWriter)
 
-	<-channel.Stop
+	<-util.Stop
 
 	if err := cmd.Process.Kill(); err != nil {
 		log.Println("[ping] error stopping:", err)
@@ -84,8 +83,8 @@ func logger(logPipe *io.PipeReader, writer *os.File) {
 	defer close(done)
 
 	var (
-		line    string
-		ml1Info Ml1Info
+		line string
+		// ml1Info Ml1Info
 	)
 
 	scanner := bufio.NewScanner(logPipe)
@@ -94,11 +93,12 @@ func logger(logPipe *io.PipeReader, writer *os.File) {
 
 		if strings.Contains(line, "5G_NR_ML1_Searcher_Measurement_Database_Update_Ext") {
 			if i := strings.Index(line, "{"); i != -1 {
-				if json.Unmarshal([]byte(line[i:]), &ml1Info) == nil {
-					if tstamp, err := unmarshalTime(ml1Info.Timestamp); err == nil {
-						fmt.Fprintf(writer, "%f,%s,%s,0\n", util.GetTime(tstamp), ml1Info.ComponentCarrierList[0].Cells[0].CellQualityRsrp, ml1Info.ComponentCarrierList[0].Cells[0].CellQualityRsrq)
-					}
-				}
+				// if json.Unmarshal([]byte(line[i:]), &ml1Info) == nil {
+				// 	if tstamp, err := unmarshalTime(ml1Info.Timestamp); err == nil {
+				// 		fmt.Fprintf(writer, "%f,%s,%s,0\n", util.GetTime(tstamp), ml1Info.ComponentCarrierList[0].Cells[0].CellQualityRsrp, ml1Info.ComponentCarrierList[0].Cells[0].CellQualityRsrq)
+				// 	}
+				// }
+				fmt.Fprintln(writer, line[i:])
 			}
 		}
 	}

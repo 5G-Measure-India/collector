@@ -1,19 +1,18 @@
-package trans
+package net
 
 import (
 	"log"
 	"os"
-	"os/exec"
+	"path"
 
-	"github.com/5G-Measure-India/collector/internal/channel"
-	"github.com/5G-Measure-India/collector/internal/config.go"
+	"github.com/5G-Measure-India/collector/internal/config"
 	"github.com/5G-Measure-India/collector/internal/util"
 )
 
 func PingRoutine() {
-	defer close(channel.PingDone)
+	defer close(util.PingDone)
 
-	csvFile := util.GetFilePath(config.OutDir, "ping.csv", config.Timestamp)
+	csvFile := path.Join(config.OutDir, config.GetFname("ping.csv"))
 	csvWriter, err := os.Create(csvFile)
 	if err != nil {
 		log.Println("[ping] error opening log file:", err)
@@ -26,7 +25,7 @@ func PingRoutine() {
 		return
 	}
 
-	cmd := exec.Command("adb", "shell", "/data/local/tmp/tping", "-S", "8.8.8.8", "-s", "1000", "-f", "csv")
+	cmd := config.Adb("shell", path.Join(config.TOOLS_DIR, "tping"), "-i", "100", "-f", "csv", config.PingServer)
 	cmd.Stdout = csvWriter
 
 	if err := cmd.Start(); err != nil {
@@ -35,7 +34,7 @@ func PingRoutine() {
 	}
 	log.Println("[ping] started | logging to:", csvFile)
 
-	<-channel.Stop
+	<-util.Stop
 
 	if err := cmd.Process.Kill(); err != nil {
 		log.Println("[ping] error stopping:", err)

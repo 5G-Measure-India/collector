@@ -1,4 +1,4 @@
-package trans
+package net
 
 import (
 	"bufio"
@@ -7,16 +7,15 @@ import (
 	"io"
 	"log"
 	"os"
-	"os/exec"
+	"path"
 	"strings"
 	"time"
 
-	"github.com/5G-Measure-India/collector/internal/channel"
-	"github.com/5G-Measure-India/collector/internal/config.go"
+	"github.com/5G-Measure-India/collector/internal/config"
 	"github.com/5G-Measure-India/collector/internal/util"
 )
 
-var done channel.Type
+var done util.Type
 
 type NdtFinalInfo struct {
 	Download struct {
@@ -34,11 +33,11 @@ type Value struct {
 }
 
 func SpeedtestRoutine() {
-	defer close(channel.SpeedtestDone)
+	defer close(util.SpeedtestDone)
 
 	lastMinute := time.Now().Minute()
 
-	csvFile := util.GetFilePath(config.OutDir, "speedtest.csv", config.Timestamp)
+	csvFile := path.Join(config.OutDir, config.GetFname("speedtest.csv"))
 	csvWriter, err := os.Create(csvFile)
 	if err != nil {
 		log.Println("[speedtest] error opening log file:", err)
@@ -57,7 +56,7 @@ func SpeedtestRoutine() {
 
 	for {
 		select {
-		case <-channel.Stop:
+		case <-util.Stop:
 			return
 		case <-time.After(5 * time.Second):
 			if time.Now().Minute() == lastMinute {
@@ -65,9 +64,9 @@ func SpeedtestRoutine() {
 			}
 
 			lastMinute = time.Now().Minute()
-			done = make(channel.Type)
+			done = make(util.Type)
 
-			cmd := exec.Command("adb", "shell", "/data/local/tmp/ndt7-client", "-format", "json")
+			cmd := config.Adb("shell", path.Join(config.TOOLS_DIR, "ndt7-client"), "-format", "json")
 			cmd.Stdout = logOut
 
 			if err := cmd.Start(); err != nil {
@@ -79,7 +78,7 @@ func SpeedtestRoutine() {
 			go logger(logIn, csvWriter)
 
 			select {
-			case <-channel.Stop:
+			case <-util.Stop:
 				if err := cmd.Process.Kill(); err != nil {
 					log.Println("[speedtest] error stopping:", err)
 				}
