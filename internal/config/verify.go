@@ -27,7 +27,7 @@ func checkOutDir() error {
 }
 
 func checkAdb() error {
-	if exec.Command(adb, "--version") != nil {
+	if exec.Command(adb, "--version").Run() != nil {
 		return errors.New("not installed")
 	}
 
@@ -35,7 +35,7 @@ func checkAdb() error {
 }
 
 func checkPython() error {
-	if exec.Command(Python, "--version") != nil {
+	if exec.Command(Python, "--version").Run() != nil {
 		return errors.New("not installed")
 	}
 
