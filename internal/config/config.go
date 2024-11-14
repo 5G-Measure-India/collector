@@ -68,11 +68,7 @@ func Parse() {
 func GetFname(fileName string) string {
 	ext := path.Ext(fileName)
 
-	if ext == "" {
-		return fileName + timestamp.Format(time.RFC3339)
-	}
-
-	return fmt.Sprintf("%s-%s%s", fileName[:len(fileName)-len(ext)], timestamp.Format(time.RFC3339), ext)
+	return fileName[:len(fileName)-len(ext)] + "-" + timestamp.Format("2006-01-02T15-04-05Z0700") + ext
 }
 
 func Adb(arg ...string) *exec.Cmd {
