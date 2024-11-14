@@ -29,7 +29,7 @@ COPY . .
 
 RUN make release
 
-FROM ubuntu:focal
+FROM mobileinsight-core:dev
 
 WORKDIR /app
 
@@ -40,5 +40,6 @@ RUN \
   rm -rf /var/lib/apt/lists/*
 
 COPY --from=build /app/collector .
+COPY mi.py .
 
 ENTRYPOINT [ "./collector" ]

@@ -71,9 +71,9 @@ func PhyRoutine() {
 	<-util.Stop
 
 	if err := cmd.Process.Kill(); err != nil {
-		log.Println("[ping] error stopping:", err)
+		log.Println("[phy] error stopping:", err)
 	} else if _, err := cmd.Process.Wait(); err != nil {
-		log.Println("[ping] error stopping:", err)
+		log.Println("[phy] error stopping:", err)
 	}
 
 	<-done
