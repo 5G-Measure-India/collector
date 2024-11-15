@@ -49,6 +49,7 @@ func SpeedtestRoutine() {
 		log.Println("[speedtest] error writing csv header:", err)
 		return
 	}
+	log.Println("[speedtest] started | logging to:", csvFile)
 
 	logIn, logOut := io.Pipe()
 	defer logOut.Close()
@@ -73,7 +74,6 @@ func SpeedtestRoutine() {
 				log.Println("[speedtest] error starting:", err)
 				return
 			}
-			log.Println("[speedtest] started | logging to:", csvFile)
 
 			go logger(logIn, csvWriter)
 

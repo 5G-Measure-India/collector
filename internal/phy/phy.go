@@ -9,32 +9,33 @@ import (
 	"os/exec"
 	"path"
 	"strings"
-	"time"
 
 	"github.com/5G-Measure-India/collector/internal/config"
 	"github.com/5G-Measure-India/collector/internal/util"
 )
 
+const miMonFile = "mi.py"
+
 var done = make(util.Type)
 
-type Ml1Info struct {
-	Timestamp            string `json:"timestamp"`
-	ComponentCarrierList []struct {
-		Cells []struct {
-			CellQualityRsrp string `json:"Cell Quality Rsrp"`
-			CellQualityRsrq string `json:"Cell Quality Rsrq"`
-		} `json:"Cells"`
-	} `json:"Component_Carrier List"`
-}
+// type Ml1Info struct {
+// 	Timestamp            string `json:"timestamp"`
+// 	ComponentCarrierList []struct {
+// 		Cells []struct {
+// 			CellQualityRsrp string `json:"Cell Quality Rsrp"`
+// 			CellQualityRsrq string `json:"Cell Quality Rsrq"`
+// 		} `json:"Cells"`
+// 	} `json:"Component_Carrier List"`
+// }
 
-func unmarshalTime(data string) (tstamp time.Time, err error) {
-	tstamp, err = time.Parse("2006-01-02 15:04:05.000000", data)
-	if err == nil {
-		tstamp = tstamp.In(time.Local)
-	}
+// func unmarshalTime(data string) (tstamp time.Time, err error) {
+// 	tstamp, err = time.Parse("2006-01-02 15:04:05.000000", data)
+// 	if err == nil {
+// 		tstamp = tstamp.In(time.Local)
+// 	}
 
-	return
-}
+// 	return
+// }
 
 func PhyRoutine() {
 	defer close(util.PhyDone)
@@ -47,16 +48,16 @@ func PhyRoutine() {
 	}
 	defer csvWriter.Close()
 
-	if _, err := csvWriter.WriteString("timestamp,rsrp,rsrq\n"); err != nil {
-		log.Println("[phy] error writing csv header:", err)
-		return
-	}
+	// if _, err := csvWriter.WriteString("timestamp,rsrp,rsrq\n"); err != nil {
+	// 	log.Println("[phy] error writing csv header:", err)
+	// 	return
+	// }
 
 	logIn, logOut := io.Pipe()
 	defer logOut.Close()
 	defer logIn.Close()
 
-	cmd := exec.Command(config.Python, config.MobMon)
+	cmd := exec.Command(config.Python, miMonFile)
 	cmd.Stdout = logOut
 	cmd.Stderr = logOut
 

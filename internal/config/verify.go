@@ -42,14 +42,6 @@ func checkPython() error {
 	return nil
 }
 
-func checkMobMon() error {
-	return nil
-}
-
-func checkPingServer() error {
-	return nil
-}
-
 func verifyFlags() {
 	if err := checkOutDir(); err != nil {
 		log.Println("[config] output dir:", OutDir, err)
@@ -72,17 +64,6 @@ func verifyFlags() {
 		log.Println("[config] python:", Python)
 	}
 
-	if err := checkMobMon(); err != nil {
-		log.Println("[config] mobile-insight monitor:", MobMon, err)
-		os.Exit(1)
-	} else {
-		log.Println("[config] mobile-insight monitor:", MobMon)
-	}
+	log.Println("[config] ping server:", PingServer)
 
-	if err := checkPingServer(); err != nil {
-		log.Println("[config] ping server:", PingServer, err)
-		os.Exit(1)
-	} else {
-		log.Println("[config] ping server:", PingServer)
-	}
 }

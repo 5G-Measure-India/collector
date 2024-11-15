@@ -16,7 +16,6 @@ var (
 	OutDir     string
 	adb        string
 	Python     string
-	MobMon     string
 	PingServer string
 
 	help    bool
@@ -36,7 +35,6 @@ func Define() {
 	pflag.StringVarP(&OutDir, "out-dir", "o", "data", "Output directory")
 	pflag.StringVarP(&adb, "adb", "a", "adb", "Path to adb")
 	pflag.StringVarP(&Python, "python", "p", "python3", "Path to python")
-	pflag.StringVarP(&MobMon, "mob-mon", "m", "mi.py", "MobileInsight monitor file")
 	pflag.StringVarP(&PingServer, "ping-server", "s", "1.1.1.1", "Ping server")
 
 	pflag.BoolVarP(&help, "help", "h", false, "Show this help")

@@ -39,4 +39,6 @@ func GeoRoutine() {
 	} else {
 		log.Println("[geo] logs pulled:", dataFile)
 	}
+
+	config.Adb("shell", "rm", csvFile).Run()
 }
