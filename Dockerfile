@@ -5,8 +5,7 @@ ARG GO_VERSION=1.23.3
 RUN \
   apt-get update && \
   apt-get install -y --no-install-recommends \
-  ca-certificates make wget && \
-  rm -rf /var/lib/apt/lists/*
+  ca-certificates make wget
 
 RUN \
   suffix=""; \
@@ -36,8 +35,7 @@ WORKDIR /app
 
 RUN \
   apt-get update && \
-  apt-get install -y --no-install-recommends \
-  adb ca-certificates tzdata && \
+  apt-get install -y --no-install-recommends adb && \
   rm -rf /var/lib/apt/lists/*
 
 COPY --from=build /app/collector .

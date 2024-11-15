@@ -1,0 +1,9 @@
+.git/
+data/
+
+collector
+
+.dockerignore
+.gitignore
+Dockerfile
+README.md
