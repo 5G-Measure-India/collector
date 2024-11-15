@@ -5,7 +5,8 @@ ARG GO_VERSION=1.23.3
 RUN \
   apt-get update && \
   apt-get install -y --no-install-recommends \
-  ca-certificates make wget
+  ca-certificates make wget && \
+  rm -rf /var/lib/apt/lists/*
 
 RUN \
   suffix=""; \
