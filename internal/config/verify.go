@@ -31,6 +31,10 @@ func checkAdb() error {
 		return errors.New("not installed")
 	}
 
+	if exec.Command(adb, "start-server").Run() != nil {
+		return errors.New("server not running")
+	}
+
 	return nil
 }
 

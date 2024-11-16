@@ -26,7 +26,7 @@ func GeoRoutine() {
 		log.Println("[geo] error starting flow:", err)
 		return
 	}
-	log.Println("[phy] started | logging to:", "adb://"+csvFile)
+	log.Println("[geo] started | logging to:", "adb://"+csvFile)
 
 	<-util.Stop
 

@@ -24,7 +24,6 @@ func main() {
 	go net.SpeedtestRoutine()
 
 	<-done
-	println()
 
 	close(util.Stop)
 
