@@ -10,7 +10,7 @@ if __name__ == "__main__":
         # "5G_NR_NAS_SM_Plain_OTA_Incoming_Msg",
         # "5G_NR_NAS_SM_Plain_OTA_Outgoing_Msg",
         # "5G_NR_NAS_MM5G_State",
-        # "5G_NR_RRC_OTA_Packet",
+        "5G_NR_RRC_OTA_Packet",
         # "5G_NR_PDCP_UL_Control_Pdu",
         # "5G_NR_L2_UL_TB",
         # "5G_NR_L2_UL_BSR",

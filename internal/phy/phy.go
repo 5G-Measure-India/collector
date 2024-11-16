@@ -18,14 +18,38 @@ const miMonFile = "mi.py"
 
 var done = make(util.Type)
 
-// type Ml1Info struct {
-// 	Timestamp            string `json:"timestamp"`
-// 	ComponentCarrierList []struct {
-// 		Cells []struct {
-// 			CellQualityRsrp string `json:"Cell Quality Rsrp"`
-// 			CellQualityRsrq string `json:"Cell Quality Rsrq"`
-// 		} `json:"Cells"`
+// type Ml1SearcherData struct {
+// 	Timestamp              string `json:"timestamp"`
+// 	NumLayers              int32  `json:"Num Layers"`
+// 	SSBPeriodicityServCell int32  `json:"SSB Periodicity Serv Cell"`
+// 	FreqOffset             string `json:"Frequency Offset"`
+// 	ComponentCarrierList   []struct {
+// 		RasterARFCN      int32  `json:"Raster ARFCN"`
+// 		ServingCellIndex int32  `json:"Serving Cell Index"`
+// 		NumCells         int32  `json:"Num Cells"`
+// 		ServingCellPCI   int32  `json:"Serving Cell PCI"`
+// 		ServingSSB       int32  `json:"Serving SSB"`
+// 		ServingRsrpRx230 string `json:"ServingRsrpRx23[0]"`
+// 		ServingRsrpRx231 string `json:"ServingRsrpRx23[1]"`
+// 		Cells            []Cell `json:"Cells"`
 // 	} `json:"Component_Carrier List"`
+// }
+
+// type Cell struct {
+// 	PCI             int32            `json:"PCI"`
+// 	PBCHSFN         int32            `json:"PBCH SFN"`
+// 	NumBeams        int32            `json:"Num Beams"`
+// 	CellQualityRsrp string           `json:"Cell Quality Rsrp"`
+// 	CellQualityRsrq string           `json:"Cell Quality Rsrq"`
+// 	Beams           map[int]BeamInfo `json:"-"`
+// }
+
+// type BeamInfo struct {
+// 	SSBIndex                int32  `json:"SSB Index"`
+// 	RxBeamInfoRSRPs0        string `json:"RX Beam Info-RSRPs[0]"`
+// 	RxBeamInfoRSRPs1        string `json:"RX Beam Info-RSRPs[1]"`
+// 	Nr2NrFilteredBeamRsrpL3 string `json:"Nr2NrFilteredBeamRsrpL3"`
+// 	Nr2NrFilteredBeamRsrqL3 string `json:"Nr2NrFilteredBeamRsrqL3"`
 // }
 
 // func unmarshalTime(data string) (tstamp time.Time, err error) {
@@ -85,20 +109,15 @@ func logger(logPipe *io.PipeReader, writer *os.File) {
 
 	var (
 		line string
-		// ml1Info Ml1Info
+		// ml1SData Ml1SearcherData
 	)
 
 	scanner := bufio.NewScanner(logPipe)
 	for scanner.Scan() {
 		line = scanner.Text()
 
-		if strings.Contains(line, "5G_NR_ML1_Searcher_Measurement_Database_Update_Ext") {
+		if strings.Contains(line, "5G_NR_ML1_Searcher_Measurement_Database_Update_Ext") || strings.Contains(line, "5G_NR_RRC_OTA_Packet") {
 			if i := strings.Index(line, "{"); i != -1 {
-				// if json.Unmarshal([]byte(line[i:]), &ml1Info) == nil {
-				// 	if tstamp, err := unmarshalTime(ml1Info.Timestamp); err == nil {
-				// 		fmt.Fprintf(writer, "%f,%s,%s,0\n", util.GetTime(tstamp), ml1Info.ComponentCarrierList[0].Cells[0].CellQualityRsrp, ml1Info.ComponentCarrierList[0].Cells[0].CellQualityRsrq)
-				// 	}
-				// }
 				fmt.Fprintln(writer, line[i:])
 			}
 		}
